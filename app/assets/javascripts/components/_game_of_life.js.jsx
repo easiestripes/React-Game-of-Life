@@ -2,29 +2,27 @@ var events = {};
 
 var Cell = React.createClass({
 	getInitialState: function() {
-		return {selected: false, nextState: false};
+		return {selected: false, nextState: false, grid_dim: Math.sqrt(this.props.cells.length)};
 	},
 	isSelected: function(row, col) {
-		var grid_dim = Math.sqrt(this.props.cells.length);
-
-		if(row == -1)
-			row = grid_dim-1;
-		if(row == grid_dim) 
+		if(row === -1)
+			row = this.state.grid_dim-1;
+		if(row === this.state.grid_dim) 
 			row = 0;
 
-		if(col == -1)
-			col = grid_dim-1;
-		if(col == grid_dim)
+		if(col === -1)
+			col = this.state.grid_dim-1;
+		if(col === this.state.grid_dim)
 			col = 0;
 
-		var id = (row * grid_dim) + col;
+		var id = (row * this.state.grid_dim) + col;
 		return this.props.cells[id].state.selected;
 	},
 	calculate: function() {
 		var neighbors = 0;
-		var grid_dim = Math.sqrt(this.props.cells.length);
-		var row = Math.floor(this.props.id / grid_dim);
-		var col = this.props.id - (row * grid_dim);
+
+		var row = Math.floor(this.props.id / this.state.grid_dim);
+		var col = this.props.id - (row * this.state.grid_dim);
 
 		// calculate number of neighbors
 		if(this.isSelected(row-1, col))
@@ -49,12 +47,12 @@ var Cell = React.createClass({
 		// assign nextState to the cell based on number of neighbors
 		this.state.nextState = false;
 		if(this.state.selected) {
-			if(neighbors == 2 || neighbors == 3)
+			if(neighbors === 2 || neighbors === 3)
 				this.state.nextState = true;
 			else
 				this.state.nextState = false;
 		} else {
-			if(neighbors == 3)
+			if(neighbors === 3)
 				this.state.nextState = true;
 		}
 	},
@@ -93,7 +91,7 @@ var Box = React.createClass({
 
 // calculate and render next state on spacebar press
 $(document).keydown(function(e) {
-	if(e.which == 32) { // spacebar
+	if(e.which === 32) { // spacebar
 		$(events).trigger("calculate");
 		$(events).trigger("renderNext");
 	}
